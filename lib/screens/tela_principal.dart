@@ -7,6 +7,7 @@ import '../cadastro/cadastro_equipamentos.dart';
 import '../cadastro/cadastro_medicao.dart';
 import '../cadastro/cadastro_unidademedida.dart';
 import '../cadastro/cadastro_tipoinformacao.dart';
+import '../cadastro/cadastro_usuario.dart';
 
 class TelaPrincipal extends StatefulWidget {
   const TelaPrincipal({super.key});
@@ -222,6 +223,20 @@ class _TelaPrincipalState extends State<TelaPrincipal> {
             ),
             title: Text('Parâmetro'),
           ),
+          ListTile(
+            leading: const Icon(Icons.chevron_right),
+            title: const Text('Usuário'),
+            onTap: () {
+            Navigator.pop(context);
+            Navigator.push(
+            context,
+            MaterialPageRoute(
+            builder: (context) =>
+            const CadastroUsuarioPage(),
+          ),
+);
+},
+),
         ],
       ],
     );
