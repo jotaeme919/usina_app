@@ -76,6 +76,11 @@
 Este aplicativo utiliza a câmera para
 capturar a foto do usuário.
 </string>
+    <key>NSLocationWhenInUseUsageDescription</key>
+<string>
+A localização é utilizada para registrar
+o local do acesso ao aplicativo.
+</string>
 </dict>
 </plist>
 

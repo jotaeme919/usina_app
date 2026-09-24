@@ -8,6 +8,8 @@ import '../cadastro/cadastro_medicao.dart';
 import '../cadastro/cadastro_unidademedida.dart';
 import '../cadastro/cadastro_tipoinformacao.dart';
 import '../cadastro/cadastro_usuario.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'login_page.dart';
 
 class TelaPrincipal extends StatefulWidget {
   const TelaPrincipal({super.key});
@@ -235,6 +237,12 @@ class _TelaPrincipalState extends State<TelaPrincipal> {
             const CadastroUsuarioPage(),
           ),
 );
+ListTile(
+leading: const Icon(Icons.logout),
+title: const Text('Sair'),
+onTap: sair,
+);
+
 },
 ),
         ],
@@ -258,6 +266,24 @@ class _TelaPrincipalState extends State<TelaPrincipal> {
           'Tela Principal',
         ),
       ),
+      
     );
   }
-}
+
+  Future<void> sair() async {
+    final prefs =
+await SharedPreferences.getInstance();
+await prefs.setBool(
+'loginRealizado',
+false,
+);
+if (!mounted) return;
+Navigator.pushReplacement(
+context,
+MaterialPageRoute(
+builder: (context) =>
+const LoginPage(),
+),
+);
+}   
+  }
