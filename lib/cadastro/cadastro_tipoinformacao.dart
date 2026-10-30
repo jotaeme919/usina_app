@@ -1,49 +1,59 @@
 import 'package:flutter/material.dart';
-import '../models/tipoinformacao.dart';
-import '../models/unidademedida.dart';
+
+
+
 
 class CadastroTipoInformacaoPage extends StatefulWidget {
   const CadastroTipoInformacaoPage({super.key});
+
+
+
 
   @override
   State<CadastroTipoInformacaoPage> createState() =>
       _CadastroTipoInformacaoPageState();
 }
 
+
+
+
 class _CadastroTipoInformacaoPageState
     extends State<CadastroTipoInformacaoPage> {
-
   final formKey = GlobalKey<FormState>();
 
+
+
+
   final nomeController = TextEditingController();
-  final unidadeController = TextEditingController();
+  final unidadeMedidaController = TextEditingController();
+
+
+
 
   @override
   void dispose() {
     nomeController.dispose();
-    unidadeController.dispose();
+    unidadeMedidaController.dispose();
+
+
+
+
     super.dispose();
   }
 
+
+
+
   void salvar() {
     if (formKey.currentState!.validate()) {
-      final unidadeMedida = UnidadeMedida(
-        id: int.parse(unidadeController.text.trim()),
-        nome: 'Unidade',
-        simbolo: 'un',
-      );
-
-      final tipoInformacao = TipoInformacao(
-        id: 1,
-        nome: nomeController.text.trim(),
-        unidademedida: unidadeMedida,
-      );
-
-      print('ID: ${tipoInformacao.id}');
-      print('Nome: ${tipoInformacao.nome}');
+      print('Nome: ${nomeController.text.trim()}');
       print(
-        'Unidade: ${tipoInformacao.unidademedida.nome}',
+        'Unidade de medida: '
+        '${unidadeMedidaController.text.trim()}',
       );
+
+
+
 
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
@@ -55,17 +65,21 @@ class _CadastroTipoInformacaoPageState
     }
   }
 
+
+
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Cadastro de Tipo de Informação'),
       ),
-      body: Padding(
+      body: SingleChildScrollView(
         padding: const EdgeInsets.all(16),
         child: Form(
           key: formKey,
           child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
               TextFormField(
                 controller: nomeController,
@@ -77,17 +91,26 @@ class _CadastroTipoInformacaoPageState
                   if (valor == null || valor.trim().isEmpty) {
                     return 'Informe o nome';
                   }
+
+
+
+
                   return null;
                 },
               ),
 
+
+
+
               const SizedBox(height: 16),
 
+
+
+
               TextFormField(
-                controller: unidadeController,
-                keyboardType: TextInputType.number,
+                controller: unidadeMedidaController,
                 decoration: const InputDecoration(
-                  labelText: 'ID da Unidade de Medida',
+                  labelText: 'Unidade de medida',
                   border: OutlineInputBorder(),
                 ),
                 validator: (valor) {
@@ -95,15 +118,20 @@ class _CadastroTipoInformacaoPageState
                     return 'Informe a unidade de medida';
                   }
 
-                  if (int.tryParse(valor.trim()) == null) {
-                    return 'Informe um ID válido';
-                  }
+
+
 
                   return null;
                 },
               ),
 
+
+
+
               const SizedBox(height: 24),
+
+
+
 
               ElevatedButton(
                 onPressed: salvar,

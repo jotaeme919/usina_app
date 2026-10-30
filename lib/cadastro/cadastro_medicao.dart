@@ -1,91 +1,146 @@
 import 'package:flutter/material.dart';
 
-import '../models/medicao.dart';
-import '../models/safra.dart';
-import '../models/unidade.dart';
-import '../models/tipoinformacao.dart';
-import '../models/unidademedida.dart';
+
+
 
 class CadastroMedicaoPage extends StatefulWidget {
   const CadastroMedicaoPage({super.key});
+
+
+
 
   @override
   State<CadastroMedicaoPage> createState() =>
       _CadastroMedicaoPageState();
 }
 
+
+
+
 class _CadastroMedicaoPageState
     extends State<CadastroMedicaoPage> {
-
   final formKey = GlobalKey<FormState>();
 
+
+
+
   final safraController = TextEditingController();
-  final unidadeController = TextEditingController();
+  final equipamentoController = TextEditingController();
   final tipoInformacaoController = TextEditingController();
   final valorController = TextEditingController();
+
+
+
+
+  DateTime? data;
+
+
+
 
   @override
   void dispose() {
     safraController.dispose();
-    unidadeController.dispose();
+    equipamentoController.dispose();
     tipoInformacaoController.dispose();
     valorController.dispose();
+
+
+
 
     super.dispose();
   }
 
+
+
+
+  Future<void> selecionarData() async {
+    final dataSelecionada = await showDatePicker(
+      context: context,
+      initialDate: DateTime.now(),
+      firstDate: DateTime(2000),
+      lastDate: DateTime(2100),
+    );
+
+
+
+
+    if (dataSelecionada == null) {
+      return;
+    }
+
+
+
+
+    final horaSelecionada = await showTimePicker(
+      context: context,
+      initialTime: TimeOfDay.now(),
+    );
+
+
+
+
+    if (horaSelecionada == null) {
+      return;
+    }
+
+
+
+
+    setState(() {
+      data = DateTime(
+        dataSelecionada.year,
+        dataSelecionada.month,
+        dataSelecionada.day,
+        horaSelecionada.hour,
+        horaSelecionada.minute,
+      );
+    });
+  }
+
+
+
+
   void salvar() {
     if (formKey.currentState!.validate()) {
-
-      // Criando uma Safra
-      final safra = Safra(
-        id: int.parse(safraController.text.trim()),
-        nome: 'Safra',
-        dataInicio: DateTime.now(),
-        dataFim: DateTime.now(),
+      final valor = double.tryParse(
+        valorController.text.trim().replaceAll(',', '.'),
       );
 
-      // Criando uma Unidade
-      final unidade = Unidade(
-        id: int.parse(unidadeController.text.trim()),
-        nome: 'Unidade',
-      );
 
-      // Criando uma Unidade de Medida
-      final unidadeMedida = UnidadeMedida(
-        id: 1,
-        nome: 'Unidade',
-        simbolo: 'un',
-      );
 
-      // Criando um Tipo de Informação
-      final tipoInformacao = TipoInformacao(
-        id: int.parse(
-          tipoInformacaoController.text.trim(),
-        ),
-        nome: 'Tipo de Informação',
-        unidademedida: unidadeMedida,
-      );
 
-      // Criando a Medição
-      final medicao = Medicao(
-        id: 1,
-        safra: safra,
-        unidade: unidade,
-        tipoinformacao: tipoInformacao,
-        valor: int.parse(
-          valorController.text.trim(),
-        ),
-      );
+      if (valor == null) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text(
+              'Informe um valor numérico válido.',
+            ),
+          ),
+        );
 
-      print('ID: ${medicao.id}');
-      print('Safra: ${medicao.safra.nome}');
-      print('Unidade: ${medicao.unidade.nome}');
+
+
+
+        return;
+      }
+
+
+
+
+      print('Safra: ${safraController.text.trim()}');
       print(
-        'Tipo de Informação: '
-        '${medicao.tipoinformacao.nome}',
+        'Equipamento: '
+        '${equipamentoController.text.trim()}',
       );
-      print('Valor: ${medicao.valor}');
+      print(
+        'Tipo de informação: '
+        '${tipoInformacaoController.text.trim()}',
+      );
+      print('Valor: $valor');
+      print('Data: $data');
+
+
+
 
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
@@ -97,133 +152,175 @@ class _CadastroMedicaoPageState
     }
   }
 
+
+
+
+  String formatarData(DateTime? data) {
+    if (data == null) {
+      return 'Selecione data e hora';
+    }
+
+
+
+
+    return '${data.day.toString().padLeft(2, '0')}/'
+        '${data.month.toString().padLeft(2, '0')}/'
+        '${data.year} '
+        '${data.hour.toString().padLeft(2, '0')}:'
+        '${data.minute.toString().padLeft(2, '0')}';
+  }
+
+
+
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Cadastro de Medição'),
       ),
-
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(16),
-
         child: Form(
           key: formKey,
-
           child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-
               TextFormField(
                 controller: safraController,
-                keyboardType: TextInputType.number,
-
                 decoration: const InputDecoration(
-                  labelText: 'ID da Safra',
+                  labelText: 'Safra',
                   border: OutlineInputBorder(),
                 ),
-
                 validator: (valor) {
-                  if (valor == null ||
-                      valor.trim().isEmpty) {
-                    return 'Informe o ID da safra';
+                  if (valor == null || valor.trim().isEmpty) {
+                    return 'Informe a safra';
                   }
 
-                  if (int.tryParse(
-                        valor.trim(),
-                      ) ==
-                      null) {
-                    return 'Informe um ID válido';
-                  }
+
+
 
                   return null;
                 },
               ),
 
+
+
+
               const SizedBox(height: 16),
+
+
+
 
               TextFormField(
-                controller: unidadeController,
-                keyboardType: TextInputType.number,
-
+                controller: equipamentoController,
                 decoration: const InputDecoration(
-                  labelText: 'ID da Unidade',
+                  labelText: 'Equipamento',
                   border: OutlineInputBorder(),
                 ),
-
                 validator: (valor) {
-                  if (valor == null ||
-                      valor.trim().isEmpty) {
-                    return 'Informe o ID da unidade';
+                  if (valor == null || valor.trim().isEmpty) {
+                    return 'Informe o equipamento';
                   }
 
-                  if (int.tryParse(
-                        valor.trim(),
-                      ) ==
-                      null) {
-                    return 'Informe um ID válido';
-                  }
+
+
 
                   return null;
                 },
               ),
 
+
+
+
               const SizedBox(height: 16),
+
+
+
 
               TextFormField(
                 controller: tipoInformacaoController,
-                keyboardType: TextInputType.number,
-
                 decoration: const InputDecoration(
-                  labelText: 'ID do Tipo de Informação',
+                  labelText: 'Tipo de informação',
                   border: OutlineInputBorder(),
                 ),
-
                 validator: (valor) {
-                  if (valor == null ||
-                      valor.trim().isEmpty) {
-                    return 'Informe o ID do tipo de informação';
+                  if (valor == null || valor.trim().isEmpty) {
+                    return 'Informe o tipo de informação';
                   }
 
-                  if (int.tryParse(
-                        valor.trim(),
-                      ) ==
-                      null) {
-                    return 'Informe um ID válido';
-                  }
+
+
 
                   return null;
                 },
               ),
 
+
+
+
               const SizedBox(height: 16),
+
+
+
 
               TextFormField(
                 controller: valorController,
-                keyboardType: TextInputType.number,
-
+                keyboardType: const TextInputType.numberWithOptions(
+                  decimal: true,
+                ),
                 decoration: const InputDecoration(
                   labelText: 'Valor',
                   border: OutlineInputBorder(),
                 ),
-
                 validator: (valor) {
-                  if (valor == null ||
-                      valor.trim().isEmpty) {
+                  if (valor == null || valor.trim().isEmpty) {
                     return 'Informe o valor';
                   }
 
-                  if (int.tryParse(
-                        valor.trim(),
-                      ) ==
-                      null) {
-                    return 'Informe um número inteiro';
+
+
+
+                  final numero = double.tryParse(
+                    valor.trim().replaceAll(',', '.'),
+                  );
+
+
+
+
+                  if (numero == null) {
+                    return 'Informe um valor numérico válido';
                   }
+
+
+
 
                   return null;
                 },
               ),
 
+
+
+
+              const SizedBox(height: 16),
+
+
+
+
+              OutlinedButton(
+                onPressed: selecionarData,
+                child: Text(
+                  'Data: ${formatarData(data)}',
+                ),
+              ),
+
+
+
+
               const SizedBox(height: 24),
+
+
+
 
               ElevatedButton(
                 onPressed: salvar,
